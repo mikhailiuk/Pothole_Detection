@@ -1,16 +1,25 @@
-function [] = drawImageWithPothole(image,clusters,potholesLarge,numberOfLargePotholes,count,clusterCount)
+function [] = drawImageWithPothole(image,boxes,potholesLarge,numberOfClusters,boxCount)
+% Function to draw the images of the road with potholes in color
 
-[m, n, ~]=size(image);
-rgb=zeros(m,n,3); 
-rgb(:,:,1)=image;
-rgb(:,:,2)=rgb(:,:,1);
-rgb(:,:,3)=rgb(:,:,1);
-image=rgb/255; 
+% The arguments are: 
+% image - original image of the road
+% clusters - array with clusters of points belonging to potholes marked
+% potholesLarge - points belonging to the pothole
+% numberOfClusters - number of clusters
+% boxCount - number of boxes
 
+% Author: Aliaksei Mikhailiuk
 
-if(numberOfLargePotholes>1)
+    [m, n, ~]=size(image);
+    rgb=zeros(m,n,3); 
+    rgb(:,:,1)=image;
+    rgb(:,:,2)=rgb(:,:,1);
+    rgb(:,:,3)=rgb(:,:,1);
+    image=rgb/255; 
+    
+    % Go through all the clusters of points and plot them in red
     [sizer,~]=size(potholesLarge);
-    for i = 1:count
+    for i = 1:numberOfClusters
       for k = 1:sizer
         if (potholesLarge(k,4) == i)
           image(potholesLarge(k,2),potholesLarge(k,3),1)=255;
@@ -18,21 +27,22 @@ if(numberOfLargePotholes>1)
       end
     end
 
-    for k = 1:clusterCount
-       for i = clusters(k,1):clusters(k,3)
-         image(i,clusters(k,2),3)=255;
-         image(i,clusters(k,4),3)=255;
+    % Go through all the boxes and plot them blue
+    for k = 1:boxCount
+       for i = boxes(k,1):boxes(k,3)
+         image(i,boxes(k,2),3)=255;
+         image(i,boxes(k,4),3)=255;
        end
-       for i = clusters(k,2):clusters(k,4)
-         image(clusters(k,1),i,3)=255;
-         image(clusters(k,3),i,3)=255;
+       for i = boxes(k,2):boxes(k,4)
+         image(boxes(k,1),i,3)=255;
+         image(boxes(k,3),i,3)=255;
        end
     end 
-end
 
-figure();
-imshow(image);
-title ('Color');
+
+    figure();
+    imshow(image);
+    title ('Color');
 
 
 end

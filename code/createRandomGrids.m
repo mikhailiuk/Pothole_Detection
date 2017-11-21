@@ -1,4 +1,17 @@
 function [randomGrids]=createRandomGrids(params,dMap)
+% A function to create a number of grids (specified in the params file) of 
+% points used to builed a model in the least squares. (grids are the x,y 
+% coordinate of the pixel and its value)
+
+% Takes as arguments:
+
+% params - containing settings
+% dMap - disparity map
+
+% Returns:
+% randomGrids - cell array of random grids
+
+% Author: Aliaksei Mikhailiuk
 
     % Number of random grids
     numberOfGrids = params.numberOfGrids;

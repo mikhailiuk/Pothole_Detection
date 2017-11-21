@@ -1,4 +1,19 @@
-function [potholesLarge,numberOfClusters]= clusterLargePotholes(potholesLarge,numberOfLargePotholes,skipPoints)
+function [potholesLarge,numberOfClusters]= clusterLargePotholes(potholesLarge,skipPoints)
+% A function to put pothole points laying close to each other into clusters
+
+% Takes as arguments:
+
+% potholesLarge - array of large potholes
+% skipPoints - how many points to skip in the computation
+
+% Returns:
+% potholesLarge - same array as in the input with additional column for the
+% cluster number a point belongs to
+
+% Author: Aliaksei Mikhailiuk
+
+
+    [numberOfLargePotholes,~] = size(potholesLarge);
     potholesLarge(:,4) = 0;
     numberOfClusters = 0;
     % Go through all points belonging to potholes

@@ -1,4 +1,19 @@
-function [potholesLarge]=  removeOutliersPotholes(potholes,potholePoints,skipPoints)
+function [potholesLarge]= removeOutliersPotholes(potholes,skipPoints)
+% A funciton to remove too small cluster of points
+
+% Takes as arguments:
+
+% potholes - array of points identified as pothols
+% skipPoints - number of points to skip (improves speed)
+
+% Returns:
+% potholesLarge - array containing only potholes points having enough
+% neighbours
+
+% Author: Aliaksei Mikhailiuk
+
+
+    [potholePoints,~] = size(potholes);
     potholes (:,4) = 0;
     for ii = 1:potholePoints
         for jj = (ii+1):potholePoints

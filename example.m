@@ -1,8 +1,16 @@
+%This file creates a file with parameteres required for the pothole
+%detection and passes them to the pothole detection algorithm. 
+
+% Author: Aliaksei Mikhailiuk
+
 clear all
 
+% Add path to the code directory
 addpath('./code')
 
-% Paths to images with pothole data
+% Paths to images with pothole data: 
+% image of the road
+% disparity map
 params.nameRoadImage = '/data/Rec_L0236.png';
 params.nameDisparityImage ='/data/Disp0236.png';
 

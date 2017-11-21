@@ -1,6 +1,21 @@
-function [potholes,potholePoints] = findPointsBelowEstimatedSurface(realPoints,aLSrg_old,skipPoints)
+function [potholes,potholesSize] = findPointsBelowEstimatedSurface(realPoints,coefs,skipPoints)
+% A function to find points laying below the modeled surface. Goes through
+% all the points and find thouse which value is withing certain range below
+% the modelled surface
+
+% Takes arguments:
+
+% realPoints - point belonging to the road surface
+% coefs - Least squares coefficients
+% skipPoints - number of points to skip (improves the speed)
+
+% Returns: 
+% potholes - potholes array (points potentially belonging to potholes)
+
+% Author: Aliaksei Mikhailiuk
+
     [tt,jj] = size(realPoints);
-    potholePoints= 0;
+    potholesSize= 0;
     for ii = 1:skipPoints:tt
 
         % Position of the pixel  
@@ -9,7 +24,7 @@ function [potholes,potholePoints] = findPointsBelowEstimatedSurface(realPoints,a
 
         % Get estimation from the Least Squares algorithm for the current
         % position of the pixel
-        estimation = aLSrg_old(1)+yy*aLSrg_old(2)+xx*aLSrg_old(3)+xx*yy*aLSrg_old(4)+yy^2*aLSrg_old(5)+xx^2*aLSrg_old(6);
+        estimation = coefs(1)+yy*coefs(2)+xx*coefs(3)+xx*yy*coefs(4)+yy^2*coefs(5)+xx^2*coefs(6);
 
 
         disparityGiven =realPoints(ii,1);
@@ -24,8 +39,8 @@ function [potholes,potholePoints] = findPointsBelowEstimatedSurface(realPoints,a
         % If the condition is satisfied, put current index into the array with
         % pothole values
         if((disparityGiven - estimation)^2>condition1 & (disparityGiven - estimation)<0 &(disparityGiven - estimation)^2<condition2)
-            potholePoints=potholePoints+1;
-            potholes(potholePoints,:)=realPoints(ii,:);
+            potholesSize=potholesSize+1;
+            potholes(potholesSize,:)=realPoints(ii,:);
         end
     end
 end

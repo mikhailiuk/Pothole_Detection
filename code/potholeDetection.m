@@ -1,4 +1,49 @@
 function [] = potholeDetection(params)
+% The main function of the algorithm calling the following steps to
+% execute:
+
+% 1) Read images
+% 2) Find the region of interest
+% 3) Select points for a number (specified in the params argument) of grids
+% to use when building the model of the road
+% 3) Copy it to the format suitable for least squares algorithm.
+% 4) Use selection of points to find the model of the road surface
+% 5) Identify points which can potentially be potholes
+% 6) Filter out outliers
+% 7) Cluster points belonging to potholes
+% 8) Put a box around the pothole
+% 9) Display the images
+
+% Params file includes:
+
+% Paths to images with pothole data: image of the road, its disparity map
+% params.nameRoadImage = '...';
+% params.nameDisparityImage ='...';
+
+% The shape of the region of interest is trapezium with a longer side on the bottom
+% Top row in the region of intereset
+% params.topRow
+% Top collumn in the region of interest in the region of interest
+% params.topColum
+ 
+% Last column in the region of interest
+% params.bottomColum;
+% 
+% Number of points to skip (do not use all the points when estimating the 
+% model of the road), good choice is 5 (every 5th point is used)
+% params.skipPoints
+% 
+% Number of random grids (1-100), good choice is 10-20
+% params.numberOfGrids
+% 
+% Number of columns in a grid (vertical) (From 10-20)
+% params.gridCollumns
+% 
+% Number of rows in a grid (horisontal) (From 10-20)
+% params.gridRows
+
+
+% Author: Aliaksei Mikhailiuk
 
     % Read the images from the files
     [image,dMap] = readImages(params.nameRoadImage,params.nameDisparityImage);
@@ -58,7 +103,8 @@ function [] = potholeDetection(params)
     % horizontal position.
     ff=0;
     [m,n]=size(ROIdMap);
-    % Go through all pixels in the ROIdMap
+    % Go through all pixels in the ROIdMap and put them in the format
+    % required by least squares 
     for jj=1:m
         for ii = 1:n
             % If pixel is greater than 0
@@ -105,7 +151,7 @@ function [] = potholeDetection(params)
         % Remove outliers from the pothole i.e. points too far away from the
         % esimated surface and points too close to the estimated surface,
         % points with no neighbouts around
-        potholesLarge=removeOutliersPotholes(potholes,potholePoints,skipPoints);
+        potholesLarge=removeOutliersPotholes(potholes,skipPoints);
 
         [numberOfLargePotholes,~] = size(potholesLarge);
 
@@ -113,16 +159,18 @@ function [] = potholeDetection(params)
         if numberOfLargePotholes > 1
             % Cluster points close to each other and mark them as the same
             % pothole
-            [potholesLarge,numberOfClusters] = clusterLargePotholes(potholesLarge,numberOfLargePotholes,skipPoints);
+            [potholesLarge,numberOfClusters] = clusterLargePotholes(potholesLarge,skipPoints);
 
             % Put boxes around current pothole estimates
-            [clusters, boxCount] = boxPotholes(potholesLarge,numberOfClusters,numberOfLargePotholes);
+            [boxes, boxCount] = boxPotholes(potholesLarge,numberOfClusters);
+
+            
+            % Draw the image with a pothole
+            drawImageWithPothole(image,boxes,potholesLarge,numberOfClusters,boxCount);
 
         end
 
     end
 
-    % Draw the image with a pothole
-    drawImageWithPothole(image,clusters,potholesLarge,numberOfLargePotholes,numberOfClusters,boxCount);
 
 end
